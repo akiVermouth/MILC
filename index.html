@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Micro Single Camera</title>
+  <title>Mirrorless Interchangeable Lens Camera</title>
+  <link rel="stylesheet" type="text/css" href="index.css">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
@@ -10,74 +11,147 @@
 </head>
 
 
-<style>
-.homepage { 
-    background-color: #000000; 
-    color: #ffffff;
-}
+<script> 
+!function ($) {
 
-.format {
-	width:1250px;
-	height:370px;
-	padding:70px;
-	font: normal;
-	font-size: 70px;
-	background-image:url("format.jpg");
-    
-}
-
-#test {
-    position: absolute;
-    top:0;
-    left:0;
-    z-index: -5
-}
-
-#container {
-  width: 100%
-  position: relative;
-
-}
-
-.aboutmilc {
-    background-color:#0d0d0d;
-    color:#bfbfbf;
-    margin:10px;
-    padding:50px 350px;
-    
-    font-size: 15px;
-}
+    "use strict"; // jshint ;_;
 
 
+    /* MAGNIFY PUBLIC CLASS DEFINITION
+     * =============================== */
 
-</style>
+    var Magnify = function (element, options) {
+        this.init('magnify', element, options)
+    }
+
+    Magnify.prototype = {
+
+        constructor: Magnify
+
+        , init: function (type, element, options) {
+            var event = 'mousemove'
+                , eventOut = 'mouseleave';
+
+            this.type = type
+            this.$element = $(element)
+            this.options = this.getOptions(options)
+            this.nativeWidth = 0
+            this.nativeHeight = 0
+
+            this.$element.wrap('<div class="magnify" \>');
+            this.$element.parent('.magnify').append('<div class="magnify-large" \>');
+            this.$element.siblings(".magnify-large").css("background","url('" + this.$element.attr("src") + "') no-repeat");
+
+            this.$element.parent('.magnify').on(event + '.' + this.type, $.proxy(this.check, this));
+            this.$element.parent('.magnify').on(eventOut + '.' + this.type, $.proxy(this.check, this));
+        }
+
+        , getOptions: function (options) {
+            options = $.extend({}, $.fn[this.type].defaults, options, this.$element.data())
+
+            if (options.delay && typeof options.delay == 'number') {
+                options.delay = {
+                    show: options.delay
+                    , hide: options.delay
+                }
+            }
+
+            return options
+        }
+
+        , check: function (e) {
+            var container = $(e.currentTarget);
+            var self = container.children('img');
+            var mag = container.children(".magnify-large");
+
+            // Get the native dimensions of the image
+            if(!this.nativeWidth && !this.nativeHeight) {
+                var image = new Image();
+                image.src = self.attr("src");
+
+                this.nativeWidth = image.width;
+                this.nativeHeight = image.height;
+
+            } else {
+
+                var magnifyOffset = container.offset();
+                var mx = e.pageX - magnifyOffset.left;
+                var my = e.pageY - magnifyOffset.top;
+
+                if (mx < container.width() && my < container.height() && mx > 0 && my > 0) {
+                    mag.fadeIn(100);
+                } else {
+                    mag.fadeOut(100);
+                }
+
+                if(mag.is(":visible"))
+                {
+                    var rx = Math.round(mx/container.width()*this.nativeWidth - mag.width()/2)*-1;
+                    var ry = Math.round(my/container.height()*this.nativeHeight - mag.height()/2)*-1;
+                    var bgp = rx + "px " + ry + "px";
+
+                    var px = mx - mag.width()/2;
+                    var py = my - mag.height()/2;
+
+                    mag.css({left: px, top: py, backgroundPosition: bgp});
+                }
+            }
+
+        }
+    }
 
 
+    /* MAGNIFY PLUGIN DEFINITION
+     * ========================= */
+
+    $.fn.magnify = function ( option ) {
+        return this.each(function () {
+            var $this = $(this)
+                , data = $this.data('magnify')
+                , options = typeof option == 'object' && option
+            if (!data) $this.data('tooltip', (data = new Magnify(this, options)))
+            if (typeof option == 'string') data[option]()
+        })
+    }
+
+    $.fn.magnify.Constructor = Magnify
+
+    $.fn.magnify.defaults = {
+        delay: 0
+    }
 
 
+    /* MAGNIFY DATA-API
+     * ================ */
 
+    $(window).on('load', function () {
+        $('[data-toggle="magnify"]').each(function () {
+            var $mag = $(this);
+            $mag.magnify()
+        })
+    })
 
-
-<body class="homepage">
-
-<div class="format" id="mypage">
-  <h1><strong>Mirrorless Interchangeable-Lens Camera</strong></h1> 
-  <p style="font-size:15px">This is a blabala....website</p> 
-</div>
+} ( window.jQuery );
+</script>
 
 
 
 
 <!--manu-->
-<nav class="navbar navbar-inverse" style="background-color:#0d0d0d">
+<nav class="navbar navbar-inverse">
   <div class="container">
+    <div class="navbar-header">
+      <a class="navbar-brand" href="#homepage">Home</a>
+    </div>
+    
     <ul class="nav navbar-nav pull-right">
-      <li class="menu"><a href="#">Home</a></li>
       
       <li><a href="#am">About MILC</a></li>
       <li><a href="#">Category</a></li> 
-      <li><a href="#">Gellery</a></li> 
-      <li><a href="#">Page 4</a></li> 
+        
+
+      <li><a href="#carousel">Gellery</a></li> 
+      <li><a href="#">Contact me</a></li> 
       
     </ul>
   </div>
@@ -85,7 +159,146 @@
 
 
 
+<body class="homepage" background="image/background1.jpg">
+
+<div id="container">
+  <div class="format"  id="mypage">
+    <img class="img-responsive center-block" src="Format-PS-.jpg"  alt="">
+  </div>
+ 
+</div>
+
+<br>
+
+<!--about-->
+<nav class="navbar navbar-inverse" style="background-color:#0d0d0d">
+  <div class="container">
+    <ul class="nav navbar-nav">
+      <li class="menu" id="am"><a href="#">About MILC</a></li>
+    </ul>
+
+  </div>
+</nav>
+<div class="aboutmilc">
+     <p class="h5"><em>
+     &nbsp;&nbsp;&nbsp;&nbsp;"A mirrorless interchangeable lens camera (MILC), also simply called a "mirrorless camera", is a camera with an interchangeable lens that, unlike a single-lens reflex camera, a (D)SLR, does not have a mirror reflex optical viewfinder.
+  <br>
+       &nbsp;&nbsp;&nbsp;&nbsp;These are also referred to as Interchangeable Lens Cameras (ILC) or Compact System Cameras (CSC). These cameras usually have an electronic viewfinder (EVF) rather than an optical one, if they have one at all. <span id="mirror" style="color:#ffffff"><strong>Mirrorless cameras are smaller, lighter, and cheaper than SLRs, while still offering through-the-lens previews."</strong></span>
+     </em>
+     </p>
+ </div>   
+
+
+
+
+<!-- Gallory -->
+<div class="container">
+
+    <div class="row">
+        <h3>
+            Products you may like
+        </h3>
+        <br>
+        <br>
+        <p>
+          Camera
+        </p>
+        <hr>
+    </div>
+
+       <!--Camera-->
+    <div class="row">
+    
+        <div class="col-md-3">
+            <div class="mag">
+                Olympus E-PL7<br>
+                <img data-toggle="magnify" class="img-thumbnail img-responsive" src="images/camera/Olympus-epl7.jpg" alt="">
+            </div>
+        </div><!--/span-->
+        
+        
+        <div class="col-md-3">
+            <div class="mag">
+                Panasonic Lumix GX8<br>
+                <img data-toggle="magnify" class="img-thumbnail img-responsive" src="images/camera/Panasonic - LUMIX GX8.jpg" alt="">
+            </div>
+        </div><!--/span-->
+        
+        <div class="col-md-3">
+            <div class="mag">
+                Sony a6000<br>
+                <img data-toggle="magnify" class="img-thumbnail img-responsive" src="images/camera/Sony-a6000.jpg" alt="">
+            </div>
+        </div><!--/span-->
+
+        <div class="col-md-3">
+            <div class="mag">
+                Nikon- 5<br>
+                <img data-toggle="magnify" class="img-thumbnail  img-responsive" src="images/camera/Nikon-J5.jpg" alt="">
+            </div>
+        </div><!--/span-->
+ 
+
+    </div><!--/row-->
+   <br>
+   <br>
+   <div class="row">
+        
+        <p>
+          Lens
+        </p>
+        <hr>
+    </div>
+
+
+     <!--Lens-->
+    <div class="row">
+    
+        <div class="col-md-3">
+            <div class="mag">
+                Olympus  M.Zuiko 17mm F2.8 <br>
+                <img data-toggle="magnify" class="img-thumbnail" src="images/Lens/Olympus-M.Zuiko.jpg" alt="">
+            </div>
+        </div><!--/span-->
+        
+        
+        <div class="col-md-3">
+            <div class="mag">
+               Panasonic  Lumix G45-150mm  <br>
+                <img data-toggle="magnify" class="img-thumbnail" src="images/Lens/Panasonic - lumix.jpg" alt="">
+            </div>
+        </div><!--/span-->
+        
+        <div class="col-md-3">
+            <div class="mag">
+                Sony FE 50mm F1.8<br>
+                <img data-toggle="magnify" class="img-thumbnail" src="images/Lens/Sony-FE.jpg" alt="">
+            </div>
+        </div><!--/span-->
+
+        <div class="col-md-3">
+            <div class="mag">
+                NIKKOR 10mm F2.8<br>
+                <img data-toggle="magnify" class="img-thumbnail" src="images/Lens/Nikon-1.jpg" alt="">
+            </div>
+        </div><!--/span-->
+ 
+
+    </div><!--/row-->   
+ </div> <!-- / .container -->
+<br>
+<br>
+
+
 <!--Carousel-->
+<nav class="navbar navbar-inverse" style="background-color:#0d0d0d">
+  <div class="container">
+    <ul class="nav navbar-nav">
+      <li class="menu" id="carousel"><a href="#">Gallory</a></li>
+    </ul>
+
+  </div>
+</nav>
 <div id="myCarousel" class="carousel slide" data-ride="carousel">
   <!-- Indicators -->
   <ol class="carousel-indicators">
@@ -98,19 +311,19 @@
   <!-- Wrapper for slides -->
   <div class="carousel-inner" role="listbox">
     <div class="item active">
-      <img src="01.jpg" alt="">
+      <img class="img-responsive center-block" src="images/Carousel/01.jpg" alt="">
     </div>
 
     <div class="item">
-      <img src="02.jpg" alt="">
+      <img class="img-responsive center-block" src="images/Carousel/02.jpg" alt="">
     </div>
 
     <div class="item">
-      <img src="03.png" alt="">
+      <img class="img-responsive center-block" src="images/Carousel/03.png" alt="">
     </div>
 
     <div class="item">
-      <img src="04.jpg" alt="">
+      <img class="img-responsive center-block" src="images/Carousel/04.jpg" alt="">
     </div>
   </div>
 
@@ -126,27 +339,6 @@
 </div>
 
 <br>
-<br>
-
-<!--about-->
-<nav class="navbar navbar-inverse" style="background-color:#0d0d0d">
-  <div class="container">
-    <ul class="nav navbar-nav">
-      <li class="menu" id="am"><a href="#">About MILC</a></li>
-    </ul>
-
-  </div>
-</nav>
-<div class="aboutmilc">
-     <em>
-     &nbsp;&nbsp;&nbsp;&nbsp;"A mirrorless interchangeable lens camera (MILC), also simply called a "mirrorless camera", is a camera with an interchangeable lens that, unlike a single-lens reflex camera, a (D)SLR, does not have a mirror reflex optical viewfinder.
-  <br>
-       &nbsp;&nbsp;&nbsp;&nbsp;These are also referred to as Interchangeable Lens Cameras (ILC) or Compact System Cameras (CSC). These cameras usually have an electronic viewfinder (EVF) rather than an optical one, if they have one at all. <span id="mirror" style="color:#ffffff"><strong>Mirrorless cameras are smaller, lighter, and cheaper than SLRs, while still offering through-the-lens previews."</strong></span>
-     </em>
- </div>   
-
-
-
 
 
 

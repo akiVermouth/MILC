@@ -1,0 +1,26 @@
+.homepage { 
+    background-color: #000000; 
+    color: #ffffff;
+}
+
+#container {
+  width: 100%
+  position: relative;
+}
+
+
+
+
+.hide-bullets {
+    list-style:none;
+    margin-left: -40px;
+    margin-top:20px;
+}
+
+.thumbnail {
+    padding: 0;
+}
+
+.carousel-inner>.item>img, .carousel-inner>.item>a>img {
+    width: 100%;
+}

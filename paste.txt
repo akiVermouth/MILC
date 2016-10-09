@@ -9,10 +9,9 @@ Nikon - 1 NIKKOR 10mm f/2.8 Wide-Angle Lens for Select Nikon 1 Cameras - White
 Sony - FE 50mm f/1.8 Prime Lens for Sony Alpha E-mount Cameras
 
 
+Sony Alpha a6000 Mirrorless Camera with 16¨C50mm Retractable Lens: Start capturing realistic images and HD video footage for yourself or your clients with the Sony Alpha a6000, which features a 24.3-megapixel Exmor CMOS sensor and comes with a 16¨C50mm lens that's lightweight for easy transport. When you're all set, just connect your devices via the camera's built-in Wi-Fi to share photos with loved ones.
+
+Memory card sold separately.
 
 
 
-	background-size:100%;
-	background-attachment: fixed;
-	background-repeat: no-repeat;
-}
